@@ -58,7 +58,7 @@ contains
     integer               :: allocstat, cnt, cons, fevalcnt, geninfo,      &
                              gevalcnt, hevalcnt, hnnzmax, flag, inform,    &
                              j, jcnnzmax, k, n, nvparam, nwstep, tevalcnt, &
-                             uflag
+                             uflag, solvecnt
     real(kind=4)          :: tfinish, tstart
     real(kind=dp)         :: cnorm, efacc, efstain, eoacc, eostain,   &
                              epsfeas, epsopt, ftrial, ginfnorm, mval, &
@@ -97,6 +97,7 @@ contains
     gevalcnt = 0
     hevalcnt = 0
     tevalcnt = 0
+    solvecnt = 0
 
     sigmaini = param%sigmalow
 
@@ -315,6 +316,8 @@ contains
              exit outer
           end if
 
+          solvecnt = solvecnt + 1
+
           call model_evalg( n, s, mg, flag )
           mgnorm2 = norm2( mg )
           snorm2  = norm2( s )
@@ -331,6 +334,13 @@ contains
                 write (*,fmt='(1P,2X,D16.8)',advance='no') s(cnt)
              end do
              write (*,*)
+          end if
+
+          ! >>>>>>> FOR GENERALIZED MINIMIZATION PROFILE
+          ! Print the objective function value and fevalcnt
+          if ( param%trackunit .gt. 0 ) then
+             write (param%trackunit, fmt='(ES25.16, 2X, ES25.16, 2X, ES25.16, 2X, I8, 2X, I8, 2X, I8, 2X, ES25.16, 2X, ES25.16)') &
+                   f, ginfnorm, snorm2, fevalcnt, gevalcnt, solvecnt, sigma, mval
           end if
 
           ! --------------------------------------------------------------
@@ -510,12 +520,6 @@ contains
                       write (*,*) "   ftrial meets simple descence"
                    end if
 
-                   ! >>>>>>> FOR GENERALIZED MINIMIZATION PROFILE
-                   ! Print the objective function value and fevalcnt
-                   if ( param%trackunit .gt. 0 ) then
-                      write (param%trackunit, fmt='(F40.16, 2X, I8)') ftrial, fevalcnt
-                   end if
-
                    call param%uevalg( x, g, uflag )
                    gevalcnt = gevalcnt + 1
                    if ( uflag .ne. 0 ) then
@@ -574,12 +578,6 @@ contains
 
              if ( sigma .eq. 0.0_dp ) then
                 nwstep = nwstep + 1
-             end if
-
-             ! >>>>>>> FOR GENERALIZED MINIMIZATION PROFILE
-             ! Print the objective function value and fevalcnt
-             if ( param%trackunit .gt. 0 ) then
-                write (param%trackunit, fmt='(F40.16, 2X, I8)') f, fevalcnt
              end if
 
              ! Compute the derivatives of the objective in the new point
@@ -651,6 +649,14 @@ contains
 
        k = k + 1
     end do outer
+
+    ! >>>>>>> FOR GENERALIZED MINIMIZATION PROFILE
+    ! Print the objective function value and fevalcnt
+    if ( param%trackunit .gt. 0 ) then
+      write (param%trackunit, fmt='(ES25.16, 2X, ES25.16, 2X, ES25.16, 2X, I8, 2X, I8, 2X, I8, 2X, ES25.16, 2X, ES25.16)') &
+            f, ginfnorm, snorm2, fevalcnt, gevalcnt, solvecnt, sigma, mval
+    end if
+
 
     call cpu_time( tfinish )
 
