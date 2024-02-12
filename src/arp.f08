@@ -63,7 +63,8 @@ contains
     real(kind=dp)         :: cnorm, efacc, efstain, eoacc, eostain,   &
                              epsfeas, epsopt, ftrial, ginfnorm, mval, &
                              mgnorm2, nlpsupn, sinfnorm, snorm,       &
-                             snorm2, sigmaini, xinfnorm, g0infnorm
+                             snorm2, sigmaini, xinfnorm, g0infnorm,   &
+                             mginfnorm
     real(kind=dp), target :: f, sigma
 
     ! LOCAL ARRAYS
@@ -314,9 +315,16 @@ contains
              exit outer
           end if
 
+          call model_evalg( n, s, mg, flag )
+          mgnorm2 = norm2( mg )
+          snorm2  = norm2( s )
+          mginfnorm = maxval( abs( mg ) )
+
           if ( param % printlevel .gt. 1 ) then
              write (*,fmt='(A)') "Algencan returned with:"
              write (*,fmt='(2X,A,1P,D24.16)') "mval                 = ", mval
+             write (*,fmt='(2X,A,1P,D24.16)') "||mg||               = ", mginfnorm
+             write (*,fmt='(2X,A,1P,D24.16)') "||s||                = ", snorm2
              write (*,fmt='(2X,I0,A,1P,D16.8)',advance='no') &
                   min( n, 4 ), " coordinate(s) of s = ", s(1)
              do cnt = 2, min( n, 4 )
@@ -325,9 +333,6 @@ contains
              write (*,*)
           end if
 
-          call model_evalg( n, s, mg, flag )
-          mgnorm2 = norm2( mg )
-          snorm2  = norm2( s )
           ! --------------------------------------------------------------
 
           ! --------------------------------------------------------------
