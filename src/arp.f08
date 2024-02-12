@@ -13,7 +13,7 @@ module arp
 contains
 
   ! ==================================================================
-  
+
   subroutine arp_load( param )
     ! STRUCTURE ARGUMENT
     type(arp_param), intent(out) :: param
@@ -48,7 +48,7 @@ contains
 
     ! STRUCTURE ARGUMENT
     type(arp_param), intent(in) :: param
-    
+
     ! ROUTINE OUTPUT
     type(arp_output), intent(out) :: output
 
@@ -88,9 +88,9 @@ contains
 
     ! Initializations
     call cpu_time( tstart )
-    
+
     n = size( x )
-    
+
     k = 0
 
     fevalcnt = 0
@@ -108,7 +108,7 @@ contains
        output%info = - 10
        return
     end if
-    
+
     if ( param%dense ) then
        if ( param%p .ge. 2 ) then
           allocate( h(n,n), stat=allocstat )
@@ -116,7 +116,7 @@ contains
           if ( param%p .eq. 3 ) then
              allocate( t(n,n,n), stat=allocstat )
           end if
-          
+
           if ( allocstat .ne. 0 ) then
              output%info = - 11
              return
@@ -128,7 +128,7 @@ contains
             ts%id2(param%tnnzmax), ts%id3(param%tnnzmax),      &
             ts%val(param%tnnzmax), stat=allocstat )
     end if
-       
+
     if ( allocstat .ne. 0 ) then
        output%info = - 12
        return
@@ -165,7 +165,7 @@ contains
     else
        call set_model_pointers( param%p, sigma, param%dense, f, g, hs_in=hs, ts_in=ts )
     end if
-    
+
     ! Evaluates the function and its derivatives at the initial point
     call param%uevalf( x, f, uflag )
     fevalcnt = fevalcnt + 1
@@ -189,7 +189,7 @@ contains
        else
           call param%uevalhs( x, hs, uflag )
        end if
-       
+
        hevalcnt = hevalcnt + 1
 
        if ( uflag .ne. 0 ) then
@@ -204,7 +204,7 @@ contains
        else
           call param%uevalts( x, ts, uflag )
        end if
-       
+
        tevalcnt = tevalcnt + 1
 
        if ( uflag .ne. 0 ) then
@@ -309,7 +309,7 @@ contains
                nvparam, vparam, param%theta, param%p, n, s, l, u, cons, &
                lambda, equatn, linear, coded, checkder, mval, cnorm,    &
                snorm, nlpsupn, geninfo, inform )
-       
+
           if ( inform .ne. 0 ) then
              flag = 10 * inform
              exit outer
@@ -340,7 +340,7 @@ contains
           ! --------------------------------------------------------------
           sinfnorm = maxval( abs( s ) )
           xinfnorm = maxval( abs( x ) )
-          
+
           if ( j .lt. param%bigJ .and. (                                   &
                ( f - mval ) / max( 1.0_dp, abs( f ) ) .gt. param%eta1 .or. &
                    sinfnorm / max( 1.0_dp, xinfnorm ) .gt. param%eta2 )    &
@@ -362,7 +362,7 @@ contains
              else
                 sigma = max( param%sigmalow, param % gamma2 * sigma )
              end if
-             
+
              if ( param % printlevel .gt. 1 ) then
                 write (*,fmt='(/,A,1P,D9.3,/)') "sigma = ", sigma
              end if
@@ -415,11 +415,11 @@ contains
                    end do
                    write (*,fmt='(/)')
                 end if
-             
+
                 write (*,100) 'iter', 'sigma', 'f', '||g||', 'geninfo', '||mg||', &
                      '||s||', 'ftrial', 'dec?'
              end if
-          
+
              write (*,200) k, sigma, f, ginfnorm, geninfo, mgnorm2, &
                   snorm2, ftrial, f-ftrial
 
@@ -447,12 +447,12 @@ contains
              if ( param%printlevel .gt. 1 ) then
                 write (*,fmt='(/,A)') "Gencan converged to an optimal solution"
              end if
-          
+
              ! Checks if ftrial meets p+1 descense or a fixed descence
              ! of order epsilon^((p+1)/p)
              if ( ftrial .le. f - param%alpha * snorm2**(param%p+1) .or. &
                   ftrial .le. f - 1.0e+04_dp * param%epsilon**((param%p+1.0_dp)/param%p) ) then
-                
+
                 successful = .true.
 
                 if ( param%printlevel .gt. 1 ) then
@@ -468,7 +468,7 @@ contains
                       write (*,*) "   ftrial meets fixed descence"
                    end if
                 end if
-             
+
              else
                 successful = .false.
 
@@ -492,7 +492,7 @@ contains
                 if ( param%printlevel .gt. 1 ) then
                    write (*,*) "   ftrial meets fixed descence"
                 end if
-             
+
              else
                 successful = .false.
 
@@ -539,7 +539,7 @@ contains
                       write (*,fmt='(4X,A,1P,D24.16,/)') &
                            "the failure accepted point is not an optimal solution ... ||g|| = ", ginfnorm
                    end if
-                
+
                    flag = - 3
                    exit outer
                 end if
@@ -566,12 +566,12 @@ contains
 
              j = j + 1
              cycle inner
-             
+
           ! Successful iteration
           else
              x = xtrial
              f = ftrial
-          
+
              if ( sigma .eq. 0.0_dp ) then
                 nwstep = nwstep + 1
              end if
@@ -659,7 +659,7 @@ contains
        select case ( flag )
        case (-3)
           write (*,497)
-          
+
        case (-2)
           write (*,498)
 
