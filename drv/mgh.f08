@@ -72,7 +72,7 @@ program mgh
         call get_command_argument( i, arg )
         read( arg, *, iostat=iostat ) m
         if ( iostat .ne. 0 ) m = 0
-        
+
      case ( '-n' )
         i = i + 1
         call get_command_argument( i, arg )
@@ -90,7 +90,7 @@ program mgh
 
      case ( '-track' )
         rmp = .true.
-        
+
      end select
 
      i = i + 1
@@ -106,16 +106,16 @@ program mgh
      write ( *, * ) "    -J      J value ... .................. >=0,      optional, default: 20"
      write ( *, * ) "    -alg21  runs alg. 2.1 ................ no param, optional, default: runs algorithm 4.1"
      write ( *, * ) "    -track  per iteration information .... no param, optional"
-     
+
      return
   end if
-  
+
   do prob = firstprob, lastprob
      ! Set MGH problem
      call mgh_set_problem( prob, flag )
 
      ! Set problem dimensions
-     if ( n .eq. 0 .and. m .eq. 0 ) then
+     if (( n .eq. 0 .and. m .eq. 0 ) .or. (firstprob .ne. lastprob)) then
         call mgh_get_dims( n, m )
      else
         call mgh_set_dims( n, m, flag )
@@ -193,5 +193,5 @@ program mgh
 100 format( 2X, I2, 2X, A42, 2(2X, I4), 1X, 1P, '|  ', I3, 1X, &
             2(D16.8, 1X), 3(I8, 1X), F10.2, 1X, D10.3, 1X, I5, &
             1X, I5, ' |' )
-  
+
 end program mgh
