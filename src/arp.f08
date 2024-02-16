@@ -329,6 +329,7 @@ contains
              write (*,fmt='(2X,A,1P,D24.16)') "mval                 = ", mval
              write (*,fmt='(2X,A,1P,D24.16)') "||mg||               = ", mginfnorm
              write (*,fmt='(2X,A,1P,D24.16)') "||s||                = ", snorm2
+             write (*,fmt='(2X,A,1P,I3)')     "geninfo              = ", geninfo
              write (*,fmt='(2X,I0,A,1P,D16.8)',advance='no') &
                   min( n, 4 ), " coordinate(s) of s = ", s(1)
              do cnt = 2, min( n, 4 )
