@@ -1,7 +1,7 @@
 module arp_types
 
   implicit none
-  
+
   ! PRECISION
   integer, parameter :: dp      = kind( 0.0d0 )
   integer, parameter :: macheps = epsilon( 0.0d0 )
@@ -43,7 +43,7 @@ module arp_types
        ! ARRAY ARGUMENT
        real(kind=dp), dimension(:), intent(in) :: x
      end subroutine evalf
-     
+
      subroutine evalg(x,g,flag)
        import :: dp
        ! SCALAR ARGUMENT
@@ -52,7 +52,7 @@ module arp_types
        real(kind=dp), dimension(:), intent(in)  :: x
        real(kind=dp), dimension(:), intent(out) :: g
      end subroutine evalg
-     
+
      subroutine evalh(x,h,flag)
        import :: dp
        ! SCALAR ARGUMENT
@@ -73,7 +73,7 @@ module arp_types
      end subroutine evalhs
 
      subroutine evalt(x,t,flag)
-       import :: dp 
+       import :: dp
        ! SCALAR ARGUMENT
        integer, intent(out) :: flag
        ! ARRAY ARGUMENTS
@@ -88,7 +88,7 @@ module arp_types
        ! ARRAY ARGUMENT
        real(kind=dp), dimension(:), intent(in) :: x
        ! SPARSE TENSOR ARGUMENT
-       type(sparse_tensor), intent(inout) :: ts       
+       type(sparse_tensor), intent(inout) :: ts
      end subroutine evalts
   end interface
 
@@ -117,6 +117,7 @@ module arp_types
      logical       :: sigmaini    ! Increase sigma from sigmaini?
      real(kind=dp) :: epsilon     ! Optimality precision
      real(kind=dp) :: epsilonrel  ! Optimality precision
+     real(kind=dp) :: subepsilon  ! Optimality precision for subproblem
 
      ! Routines
      procedure(evalf),  pointer, nopass :: uevalf
@@ -129,7 +130,7 @@ module arp_types
   end type arp_param
 
   ! ------------------------------------------------------------------
-  
+
   type arp_output
 
      integer       :: fcnt       ! Total function evaluations

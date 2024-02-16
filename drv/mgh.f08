@@ -13,6 +13,7 @@ program mgh
   integer           :: allocstat, bigJ, cnt, firstprob, flag, i, iostat, &
                        lastprob, m, n, p, pl, prob, perturb
   logical           :: sigmaini, rmp
+  real(kind=dp)     :: subepsilon
 
   ! ARP PARAMETERS
   type(arp_param) :: param
@@ -36,6 +37,8 @@ program mgh
   lastprob  = 0
   sigmaini  = .true.
   rmp       = .false.
+  perturb   = 0
+  subepsilon = huge( 0.0_dp )
 
   i = 1
   do while ( i .le. command_argument_count() )
@@ -101,12 +104,18 @@ program mgh
         read( arg, *, iostat=iostat ) perturb
         if ( iostat .ne. 0 ) perturb = 1
 
-     end select
+      case ( '-subtol' )
+         i = i + 1
+         call get_command_argument( i, arg )
+         read( arg, *, iostat=iostat ) subepsilon
+         if ( iostat .ne. 0 ) subepsilon = 0
+
+      end select
 
      i = i + 1
   end do
 
-  if ( p .eq. 0 .or. firstprob .eq. 0 ) then
+  if ( p .eq. 0 .or. firstprob .eq. 0 .or. subepsilon .eq. 0 ) then
      write ( *, * ) "Command line arguments:"
      write ( *, * ) "    -p      avaliable derivatives ........ {1,2,3},  mandatory"
      write ( *, * ) "    -prob   problem number or interval ... 1:35,     mandatory"
@@ -117,6 +126,7 @@ program mgh
      write ( *, * ) "    -alg21  runs alg. 2.1 ................ no param, optional, default: runs algorithm 4.1"
      write ( *, * ) "    -track  per iteration information .... no param, optional"
      write ( *, * ) "    -pert   perturb starting point ....... >=0,      optional, default: 0"
+     write ( *, * ) "    -subtol subproblem tolerance .......   >0,       optional, default: infinity"
 
      return
   end if
@@ -192,6 +202,7 @@ program mgh
 
      param%bigJ     = bigJ
      param%sigmaini = sigmaini
+     param%subepsilon = subepsilon
 
      if ( rmp ) then
         write ( filename, '(I0,A)' ) prob, "_rmp.txt"

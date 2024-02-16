@@ -23,6 +23,7 @@ contains
     param%dense      = .true.
     param%epsilon    = 1.0e-08_dp
     param%epsilonrel = 1.0e-09_dp
+    param%subepsilon = huge( 0.0_dp )
     param%eta1       = 1.0e+03_dp
     param%eta2       = 3.0_dp
     param%gamma1     = 5.0e-01_dp
@@ -150,7 +151,7 @@ contains
     checkder = .false.
 
     epsfeas   = 1.0d-08
-    epsopt    = huge( 0.0d0 )
+    epsopt    = param%subepsilon
     efstain   = sqrt( epsfeas )
     eostain   = epsopt ** 1.5d0
     efacc     = sqrt( epsfeas )
