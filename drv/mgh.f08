@@ -11,7 +11,7 @@ program mgh
   character(len=30) :: arg, filename
   character(len=60) :: probname
   integer           :: allocstat, bigJ, cnt, firstprob, flag, i, iostat, &
-                       lastprob, m, n, p, pl, prob
+                       lastprob, m, n, p, pl, prob, perturb
   logical           :: sigmaini, rmp
 
   ! ARP PARAMETERS
@@ -95,6 +95,12 @@ program mgh
      case ( '-track' )
         rmp = .true.
 
+     case ( '-pert' )
+        i = i + 1
+        call get_command_argument( i, arg )
+        read( arg, *, iostat=iostat ) perturb
+        if ( iostat .ne. 0 ) perturb = 1
+
      end select
 
      i = i + 1
@@ -110,6 +116,7 @@ program mgh
      write ( *, * ) "    -J      J value ... .................. >=0,      optional, default: 20"
      write ( *, * ) "    -alg21  runs alg. 2.1 ................ no param, optional, default: runs algorithm 4.1"
      write ( *, * ) "    -track  per iteration information .... no param, optional"
+     write ( *, * ) "    -pert   perturb starting point ....... >=0,      optional, default: 0"
 
      return
   end if
@@ -154,18 +161,23 @@ program mgh
      ! Get initial point
      call mgh_get_x0( x )
 
-     ! Get random perturbation
-     call random_seed( size = seed_n )
-     allocate( seed(seed_n) )
-     seed(:) = -180589750
-     call random_seed( put = seed )
+     if ( perturb .ge. 1 ) then
+        ! Get random perturbation
+        call random_seed( size = seed_n )
+        allocate( seed(seed_n) )
+        seed(:) = -180589750
+        call random_seed( put = seed )
 
-     ! call random_number( xpert ) ! advance the random number generator
+        do i = 2, perturb
+           ! advance the random number generator
+           call random_number( xpert )
+        end do
 
-     call random_number( xpert )
-     do i = 1, n
-        x(i) = x(i) + 1e-5_dp * x(i) * (2 * xpert(i) - 1)
-     end do
+        call random_number( xpert )
+        do i = 1, n
+           x(i) = x(i) + 1e-5_dp * max(1.0_dp, x(i)) * (2 * xpert(i) - 1)
+        end do
+     end if
 
      ! Initialize default arp parameters
      call arp_load( param )
