@@ -21,7 +21,11 @@ program mgh
   type(arp_output) :: output
 
   ! LOCAL ARRAYS
-  real(kind=dp), allocatable, dimension(:) :: x
+  real(kind=dp), allocatable, dimension(:) :: x, xpert
+
+  ! SEED
+  integer, allocatable, dimension(:) :: seed
+  integer :: seed_n
 
   bigJ      = 20
   n         = 0
@@ -141,8 +145,27 @@ program mgh
         return
      end if
 
+     allocate( xpert(n), stat=allocstat )
+     if ( allocstat .ne. 0 ) then
+        write ( *, * ) "Allocation error in run_mgh."
+        return
+     end if
+
      ! Get initial point
      call mgh_get_x0( x )
+
+     ! Get random perturbation
+     call random_seed( size = seed_n )
+     allocate( seed(seed_n) )
+     seed(:) = -180589750
+     call random_seed( put = seed )
+
+     ! call random_number( xpert ) ! advance the random number generator
+
+     call random_number( xpert )
+     do i = 1, n
+        x(i) = x(i) + 1e-5_dp * x(i) * (2 * xpert(i) - 1)
+     end do
 
      ! Initialize default arp parameters
      call arp_load( param )
