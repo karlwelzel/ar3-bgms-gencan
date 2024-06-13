@@ -549,7 +549,7 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
 
      if ( inniter .eq. 'TR' ) then
 
-        write (*, *) 'TR'
+        ! write (*, *) 'TR'
 
         call betra(n,nind,x,l,u,m,lambda,rho,equatn,linear,f,g,trdel, &
              newtrdel,mslamb,epsopt,xeucn,d,xplus,fplus,gplus,trcnt,  &
@@ -567,7 +567,7 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
 
      if ( inniter .eq. 'NW' ) then
 
-        write (*, *) 'NW'
+        ! write (*, *) 'NW'
 
         ! Solve the Newtonian system
         !
@@ -616,7 +616,7 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
           ( inniter .eq. 'TR' .and. trinfo .eq. SECORDPNT ) .or. &
           ( inniter .eq. 'TR' .and. trinfo .eq. TCLSBNDRY ) ) then
 
-        write (*, *) 'TN'
+        ! write (*, *) 'TN'
 
         ! Compute "trust-region radius" for CG
 
