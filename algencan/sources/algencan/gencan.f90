@@ -119,6 +119,7 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
 
   ! for the first inner-to-the-face minimization algorithm
   inniter = 'TN'
+  ! inniter = innslvr
 
   ! for testing lack of progress checking f, g and x
   itnfp = 0
@@ -306,7 +307,7 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
      acgeps = 0.0d0
      bcgeps = cgepsf
   end if
-  
+
   ! Print initial information
 
   if ( iprintinn .eq. 1 ) then
@@ -396,7 +397,7 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
        ( cnorm .gt. efstain .and. gpsupn .le. eostain ) ) ) ) then
 
      geninfo = 0
-     
+
      if ( iprintinn .ge. 1 ) then
         write(*, 1200)
         write(10,1200)
@@ -548,6 +549,8 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
 
      if ( inniter .eq. 'TR' ) then
 
+        write (*, *) 'TR'
+
         call betra(n,nind,x,l,u,m,lambda,rho,equatn,linear,f,g,trdel, &
              newtrdel,mslamb,epsopt,xeucn,d,xplus,fplus,gplus,trcnt,  &
              chcnt,memfail,trinfo,inform)
@@ -563,6 +566,8 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
      ! Compute the descent direction solving the newtonian system
 
      if ( inniter .eq. 'NW' ) then
+
+        write (*, *) 'NW'
 
         ! Solve the Newtonian system
         !
@@ -610,6 +615,8 @@ subroutine gencan(n,x,l,u,m,lambda,equatn,linear,rho,epsfeas, &
           ( inniter .eq. 'TR' .and. trinfo .eq. FSTORDPNT ) .or. &
           ( inniter .eq. 'TR' .and. trinfo .eq. SECORDPNT ) .or. &
           ( inniter .eq. 'TR' .and. trinfo .eq. TCLSBNDRY ) ) then
+
+        write (*, *) 'TN'
 
         ! Compute "trust-region radius" for CG
 
@@ -957,7 +964,7 @@ end subroutine gencan
 ! ******************************************************************
 
 subroutine compamax(nind,x,l,u,d,amax,rbdnnz,rbdind,rbdtype)
-  
+
   use modmachconst
 
   implicit none
