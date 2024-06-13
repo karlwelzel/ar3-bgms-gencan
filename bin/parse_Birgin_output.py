@@ -12,24 +12,33 @@ for experiment_path in cwd.glob("experiments_p*/*_rmp.txt"):
         "problem": problem,
         "p": p,
         "update_type": "Birgin",
-        "update_decrease_measure": "TAYLOR",
-        "update_sigma0": 1,
+        "update_directional_strategy": "NONE",
+        "update_sigma0": 1e-8,
         "x0_type": "default",
-        "stop_rule": "First_Order",
-        "stop_tolerance_g": 1e-8,
+        # "stop_rule": "First_Order",
+        # "stop_tolerance_g": 1e-8,
         "inner_solver": "GENCAN",
         # "inner_stop_rule": "ARP_Theory",
         # "inner_stop_theta": 100,
         "inner_stop_rule": "First_Order",
-        "inner_stop_tolerance_g": 1e-10,
+        "inner_stop_tolerance_g": 1e-9,
+        "wandb_project": "ar3-project",
+        "wandb_group": "Exp_Benchmark_1",
     }
-    wandb.init(project="ar3-project", group="birgin-code3", config=config)
+    wandb.init(project="ar3-project", group="Exp_Benchmark_1", config=config)
     with open(experiment_path, "r") as file:
         print(experiment_path)
         for line in file.readlines():
             if not line:
                 continue
-            f, norm_g, norm_step, total_fun, total_der, total_solves, sigma, model_plus = line.split()
+            f, norm_g, norm_step, total_fun, total_der, total_solves, sigma, model_plus, geninfo = line.split()
+            sub_status = {
+                -1: float('nan'), # no subproblem solve
+                0: 0, # SUCCESS
+                1: -1, # MAX_ITERATIONS_EXCEEDED
+                3: -2, # NUMERICAL_ISSUES
+                6: -4, # NOT_LOWER_BOUNDED
+            }[int(geninfo)]
             wandb.log({
                 "f": float(f),
                 "norm_g": float(norm_g),
@@ -38,6 +47,9 @@ for experiment_path in cwd.glob("experiments_p*/*_rmp.txt"):
                 "total_der": int(total_der),
                 "total_solves": int(total_solves),
                 "sigma": float(sigma),
-                "model_plus": float(model_plus),
+                # "model_plus": float(model_plus),
+                "sub_status": sub_status,
             })
     wandb.finish(quiet=True)
+
+    experiment_path.unlink()
