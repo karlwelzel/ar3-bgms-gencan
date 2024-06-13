@@ -233,7 +233,13 @@ program mgh
         write ( *, * ) "Deallocation error in mgh driver."
         stop
      end if
-  end do
+
+     deallocate( xpert, stat=allocstat )
+     if ( allocstat .ne. 0 ) then
+        write ( *, * ) "Deallocation error in mgh driver."
+        stop
+     end if
+   end do
 
   ! NONEXECUTABLE STATEMENTS
 100 format( 2X, I2, 2X, A42, 2(2X, I4), 1X, 1P, '|  ', I3, 1X, &
