@@ -341,8 +341,8 @@ contains
           ! >>>>>>> FOR GENERALIZED MINIMIZATION PROFILE
           ! Print the objective function value and fevalcnt
           if ( param%trackunit .gt. 0 ) then
-             write (param%trackunit, fmt='(ES25.16, 2X, ES25.16, 2X, ES25.16, 2X, I8, 2X, I8, 2X, I8, 2X, ES25.16, 2X, ES25.16)') &
-                   f, ginfnorm, snorm2, fevalcnt, gevalcnt, solvecnt, sigma, mval
+             write (param%trackunit, 300) &
+                   f, norm2( g ), snorm2, fevalcnt, gevalcnt, solvecnt, sigma, mval, geninfo
           end if
 
           ! --------------------------------------------------------------
@@ -655,8 +655,8 @@ contains
     ! >>>>>>> FOR GENERALIZED MINIMIZATION PROFILE
     ! Print the objective function value and fevalcnt
     if ( param%trackunit .gt. 0 ) then
-      write (param%trackunit, fmt='(ES25.16, 2X, ES25.16, 2X, ES25.16, 2X, I8, 2X, I8, 2X, I8, 2X, ES25.16, 2X, ES25.16)') &
-            f, ginfnorm, snorm2, fevalcnt, gevalcnt, solvecnt, sigma, mval
+      write (param%trackunit, 300) &
+            f, ginfnorm, snorm2, fevalcnt, gevalcnt, solvecnt, sigma, mval, -1
     end if
 
 
@@ -735,6 +735,7 @@ contains
 100 format( 2X, 136('='), /, 2X, A7, 2X, A10, 2(2X, A16), 2X, A7, 4(2X, A16), /, 2X, 136('=') )
 110 format( 3(2X, A16), 2X, A4 )
 200 format( 2X, I7, 1P, 2X, D10.3, 2(2X, D16.8), 2X, I7, 4(2X, D16.8), 1X, I0 )
+300 format( ES25.16, 2X, ES25.16, 2X, ES25.16, 2X, I8, 2X, I8, 2X, I8, 2X, ES25.16, 2X, ES25.16, 2X, I3 )
 
 497 format( /, 2X, 'EXIT: Gencan failed to solve subproblem and no descence holds in the current point.', / )
 498 format( /, 2X, 'EXIT: Maximum iterations exceeded.', / )
