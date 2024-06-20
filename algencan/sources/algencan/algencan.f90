@@ -70,7 +70,7 @@ subroutine algencan(fsub,gsub,hsub,csub,jacsub,hcsub,fcsub,gjacsub, &
   ! CPU time for sequential applications
 
   time = dtime(tdum)
-  
+
   ! ==================================================================
   ! Error tracker
   ! ==================================================================
@@ -197,8 +197,8 @@ subroutine algencan(fsub,gsub,hsub,csub,jacsub,hcsub,fcsub,gjacsub, &
   ! penalty parameter
 
   call setalgparam(val_maxaccitgiven = - 1)
-  call setalgparam(val_maxinnitgiven = - 1)
-  call setalgparam(val_maxoutitgiven = - 1)
+  call setalgparam(val_maxinnitgiven = 10000)
+  call setalgparam(val_maxoutitgiven = 10000)
   call setalgparam(val_rhoinigiven   = - 1.0d0)
   call setalgparam(val_rhomaxgiven   = - 1.0d0)
 
@@ -290,7 +290,7 @@ subroutine algencan(fsub,gsub,hsub,csub,jacsub,hcsub,fcsub,gjacsub, &
   if ( .false. ) then
 
      solver = 'SECO'
-     
+
      call seco(n,x,l,u,m,lambda,equatn,linear,epsfeas,epsopt,efstain,eostain, &
           .false.,.false.,f,cnorm,bdsnorm,nlnorm,fu,cunorm,outiter,totiter,   &
           best_f,best_cnorm,best_bdsnorm,best_nlnorm,best_fu,best_cunorm,     &
@@ -301,7 +301,7 @@ subroutine algencan(fsub,gsub,hsub,csub,jacsub,hcsub,fcsub,gjacsub, &
      ! ALGENCAN for PNL problems
 
      solver = 'AUGLAG'
-     
+
      call auglag(n,x,l,u,m,lambda,equatn,linear,epsfeas,epsopt,     &
           efstain,eostain,efacc,eoacc,f,cnorm,snorm,nlnorm,fu,      &
           cunorm,best_fu,best_cunorm,best_f,best_cnorm,best_nlnorm, &
@@ -315,7 +315,7 @@ subroutine algencan(fsub,gsub,hsub,csub,jacsub,hcsub,fcsub,gjacsub, &
      ! GENCAN for box-constrained problems and feasibility problems
 
      solver = 'GENCAN'
-     
+
      maxit = 999999999
 
      if ( maxinnitgiven .gt. 0 ) then
@@ -398,7 +398,7 @@ subroutine algencan(fsub,gsub,hsub,csub,jacsub,hcsub,fcsub,gjacsub, &
      write(* ,9000) time
      write(10,9000) time
   end if
-  
+
   ! ==================================================================
   ! Close output file
   ! ==================================================================
@@ -417,7 +417,7 @@ subroutine algencan(fsub,gsub,hsub,csub,jacsub,hcsub,fcsub,gjacsub, &
                        best_nlnorm,best_f,best_cnorm,best_outit, &
                        secoinfo,inform,time
         close(20)
-        
+
      else
         open(20,file='algencan-tabline.out')
         write(20,9200) fu,cunorm,f,cnorm,nlnorm,best_fu,best_cunorm,    &
